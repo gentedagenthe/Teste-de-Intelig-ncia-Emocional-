@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste de Inteligência Emocional - Genthe</title>
+    <link rel="icon" type="image/png" href="https://genthe.com.br/wp-content/uploads/2021/04/Logo-Genthe-R.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Open Sans', 'sans-serif'],
+              heading: ['Montserrat', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                dark: '#1F4E78',
+                primary: '#4472C4',
+                light: '#D9E2F3',
+              },
+              emotion: {
+                joy: '#FFD700',
+                trust: '#4472C4',
+                fear: '#9370DB',
+                surprise: '#FF6B6B',
+                sadness: '#4A5568',
+                anticipation: '#48BB78',
+                anger: '#E53E3E',
+                disgust: '#8B4513',
+              }
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4"
+  }
+}
+</script>
+</head>
+  <body class="bg-gray-50 text-slate-800 antialiased selection:bg-brand-primary selection:text-white">
+    <div id="root"></div>
+  </body>
+</html>
