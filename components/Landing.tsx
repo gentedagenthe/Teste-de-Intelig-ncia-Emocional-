@@ -20,11 +20,11 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
 
             <div className="flex items-center gap-2 mb-6 text-brand-primary font-bold tracking-wider text-sm uppercase">
               <Activity className="w-4 h-4" />
-              <span>Autoconhecimento Profissional</span>
+              <span>Autodesenvolvimento</span>
             </div>
             
             <h1 className="font-heading text-4xl md:text-5xl font-bold text-brand-dark mb-6 leading-tight">
-              Descubra sua <span className="text-brand-primary">Emoção Predominante</span>
+              Sua <span className="text-brand-primary">Emoção Predominante</span> é?
             </h1>
             
             <p className="text-gray-600 text-lg mb-8 leading-relaxed">
@@ -56,7 +56,7 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</div>
-                <span>Identifique áreas de alerta (burnout)</span>
+                <span>Identifique suas áreas emocionais</span>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center flex-shrink-0 text-xs font-bold">✓</div>

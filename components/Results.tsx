@@ -12,7 +12,7 @@ import { EmotionScore, TestResult, EmotionType } from '../types';
 import { EMOTION_COLORS, REPORT_CONTENT, getScoreLevel } from '../constants';
 import { Button } from './Button';
 import { Logo } from './Logo';
-import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone } from 'lucide-react';
+import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Calendar, ArrowRight } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 interface ResultsProps {
@@ -37,7 +37,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     
     // Header
     doc.setFontSize(22);
-    doc.setTextColor(31, 78, 120); // brand-dark
+    doc.setTextColor(0, 92, 144); // Azul Genthe #005C90
     doc.text("Genthe", 20, 20);
     
     doc.setFontSize(18);
@@ -61,7 +61,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     const content = REPORT_CONTENT[result.dominantEmotion.emotion];
     
     doc.setFontSize(14);
-    doc.setTextColor(31, 78, 120);
+    doc.setTextColor(0, 92, 144);
     doc.text("Perfil", 20, yPos);
     yPos += 10;
     
@@ -84,7 +84,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     yPos += 5;
 
     doc.setFontSize(14);
-    doc.setTextColor(0, 100, 0);
+    doc.setTextColor(124, 194, 66); // Verde Genthe #7CC242
     doc.text("Como Equilibrar", 20, yPos);
     yPos += 10;
 
@@ -112,6 +112,9 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
       default: return 'bg-green-500 text-white';
     }
   };
+
+  // WhatsApp comercial da Genthe atualizado
+  const whatsappLink = "https://wa.me/5567998005656?text=Olá! Fiz o teste de Inteligência Emocional e gostaria de saber mais sobre a Devolutiva com especialista.";
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -242,21 +245,51 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
           </div>
         </div>
 
-        {/* Help Resources */}
+        {/* SALES SECTION - DEVOLUTIVA */}
+        <div className="bg-gradient-to-r from-[#1F4E78] to-[#4472C4] text-white rounded-3xl shadow-xl p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 bg-white opacity-10 w-64 h-64 rounded-full"></div>
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 max-w-xl">
+              <div className="flex items-center gap-2 text-brand-light font-bold uppercase tracking-wider text-sm">
+                <Calendar className="w-4 h-4" />
+                <span>Exclusivo Genthe</span>
+              </div>
+              <h2 className="text-3xl font-heading font-bold leading-tight">
+                Quer ir além deste resultado?
+              </h2>
+              <p className="text-blue-100 text-lg">
+                Agende uma <span className="font-bold text-white">Devolutiva com um Especialista</span>. Transforme esse diagnóstico em um plano de ação concreto para sua carreira e vida pessoal.
+              </p>
+            </div>
+
+            <a 
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-[#7CC242] hover:bg-[#6ab035] text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-lg whitespace-nowrap"
+            >
+              Agendar Devolutiva
+              <ArrowRight className="w-5 h-5" />
+            </a>
+          </div>
+        </div>
+
+        {/* Help Resources (CVV) - Only if needed */}
         {(result.dominantEmotion.emotion === EmotionType.SADNESS || urgentEmotions.length > 0) && (
-           <div className="bg-brand-dark text-white rounded-3xl shadow-lg p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+           <div className="bg-gray-800 text-white rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm opacity-90">
              <div className="flex items-center gap-4">
-                <div className="bg-white/10 p-4 rounded-full">
-                  <Phone className="w-8 h-8 text-white" />
+                <div className="bg-white/10 p-3 rounded-full">
+                  <Phone className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold">Precisa conversar com alguém?</h3>
-                  <p className="text-brand-light opacity-90">O CVV realiza apoio emocional gratuito 24h.</p>
+                  <h3 className="font-bold">Apoio Emocional Gratuito</h3>
+                  <p className="text-gray-300">Se estiver muito difícil, o CVV (Centro de Valorização da Vida) atende 24h.</p>
                 </div>
              </div>
              <a 
                href="tel:188" 
-               className="bg-white text-brand-dark px-8 py-3 rounded-xl font-bold hover:bg-gray-100 transition-colors"
+               className="text-white underline hover:text-gray-200"
              >
                Ligar 188
              </a>
@@ -264,11 +297,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
         )}
 
         {/* Footer Actions */}
-        <div className="flex flex-col md:flex-row gap-4 justify-center pb-8">
+        <div className="flex flex-col md:flex-row gap-4 justify-center pb-8 pt-4">
            <Button onClick={handleDownloadPDF} variant="secondary" className="md:hidden w-full flex justify-center gap-2">
               <Download className="w-4 h-4" /> Baixar Relatório PDF
            </Button>
-           <Button onClick={onRetake} variant="primary" className="md:w-auto flex items-center justify-center gap-2">
+           <Button onClick={onRetake} variant="outline" className="md:w-auto flex items-center justify-center gap-2 border-gray-300 text-gray-500 hover:text-brand-dark">
              <RefreshCw className="w-4 h-4" /> Refazer Teste
            </Button>
         </div>
