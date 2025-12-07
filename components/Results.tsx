@@ -155,8 +155,8 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
               </ResponsiveContainer>
             </div>
             <div className="flex gap-4 text-xs text-gray-400 mt-2">
-              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> >32 Urgente</span>
-              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400"></div> >24 Alerta</span>
+              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> &gt;32 Urgente</span>
+              <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-orange-400"></div> &gt;24 Alerta</span>
             </div>
           </div>
 
