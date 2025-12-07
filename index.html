@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teste de Inteligência Emocional - Genthe</title>
-    <!-- Favicon SVG embutido (Logo G da Genthe) para não depender de links externos -->
+    <!-- Favicon SVG embutido (Logo G da Genthe) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><path d=%22M41.8 45.5C41.8 55.6 34.6 61.5 24.5 61.5C14.8 61.5 8.2 55.1 8.2 44.5V36.5C8.2 25.9 14.9 19.5 24.6 19.5C33.8 19.5 40.8 25.1 41.6 34.5H34.1C33.5 28.9 29.8 26.2 24.8 26.2C19.5 26.2 15.8 30.5 15.8 36.8V44.2C15.8 50.5 19.5 54.8 24.6 54.8C29.6 54.8 33.5 52.2 34.2 46.8V45.5H41.8ZM41.8 45.5V72.5C41.8 82.5 35.5 88.5 24.5 88.5C13.5 88.5 7.5 82.5 7.5 72.5H15.1C15.1 78.5 18.5 81.8 24.5 81.8C30.5 81.8 34.2 78.5 34.2 72.5V61.5H41.8V45.5Z%22 fill=%22%23005C90%22 transform=%22scale(2) translate(15, 0)%22/></svg>" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -40,18 +40,20 @@
   <script type="importmap">
 {
   "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "vite": "https://aistudiocdn.com/vite@^7.2.6",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
     "react": "https://aistudiocdn.com/react@^19.2.1",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4"
+    "jspdf": "https://aistudiocdn.com/jspdf@^3.0.4",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1"
   }
 }
 </script>
 </head>
   <body class="bg-gray-50 text-slate-800 antialiased selection:bg-brand-primary selection:text-white">
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
