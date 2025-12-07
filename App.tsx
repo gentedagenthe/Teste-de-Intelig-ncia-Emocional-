@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
 import { Landing } from './components/Landing';
 import { Instructions } from './components/Instructions';
+import { UserForm } from './components/UserForm';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
-import { AppStep, TestResult, EmotionScore, EmotionType } from './types';
+import { AppStep, TestResult, EmotionScore, EmotionType, UserData } from './types';
 import { QUESTIONS, EMOTION_COLORS, getScoreLevel } from './constants';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<AppStep>('landing');
   const [result, setResult] = useState<TestResult | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+
+  const handleUserFormSubmit = (data: UserData) => {
+    setUserData(data);
+    setStep('quiz');
+  };
 
   const calculateResults = (answers: Record<number, number>) => {
+    if (!userData) return;
+
     // Initialize scores
     const rawScores: Record<EmotionType, number> = {
       [EmotionType.JOY]: 0,
@@ -50,7 +59,8 @@ const App: React.FC = () => {
     setResult({
       scores: processedScores,
       dominantEmotion: dominant,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      userData: userData
     });
     
     setStep('results');
@@ -58,6 +68,7 @@ const App: React.FC = () => {
 
   const handleRestart = () => {
     setResult(null);
+    setUserData(null);
     setStep('landing');
     window.scrollTo(0,0);
   };
@@ -69,7 +80,11 @@ const App: React.FC = () => {
       )}
       
       {step === 'instructions' && (
-        <Instructions onNext={() => setStep('quiz')} />
+        <Instructions onNext={() => setStep('user-form')} />
+      )}
+
+      {step === 'user-form' && (
+        <UserForm onSubmit={handleUserFormSubmit} />
       )}
       
       {step === 'quiz' && (

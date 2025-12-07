@@ -8,11 +8,11 @@ import {
   ResponsiveContainer,
   Tooltip
 } from 'recharts';
-import { EmotionScore, TestResult, EmotionType } from '../types';
-import { EMOTION_COLORS, REPORT_CONTENT, getScoreLevel } from '../constants';
+import { TestResult, EmotionType } from '../types';
+import { REPORT_CONTENT } from '../constants';
 import { Button } from './Button';
 import { Logo } from './Logo';
-import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Calendar, ArrowRight } from 'lucide-react';
+import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Calendar, ArrowRight, User } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 interface ResultsProps {
@@ -30,10 +30,10 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
   }, [result]);
 
   const urgentEmotions = result.scores.filter(s => s.score >= 33);
-  const alertEmotions = result.scores.filter(s => s.score >= 25 && s.score < 33);
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
     
     // Header
     doc.setFontSize(22);
@@ -43,19 +43,27 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     doc.setFontSize(18);
     doc.text("Relatório de Inteligência Emocional", 20, 30);
     
-    doc.setFontSize(12);
-    doc.setTextColor(100);
-    doc.text(`Data: ${new Date().toLocaleDateString()}`, 20, 40);
+    // Dados do Usuário
+    doc.setFontSize(10);
+    doc.setTextColor(80);
+    doc.text(`Nome: ${result.userData.name}`, 20, 42);
+    doc.text(`CPF: ${result.userData.cpf}`, 20, 47);
+    doc.text(`Nascimento: ${result.userData.birthDate.split('-').reverse().join('/')}`, 110, 47);
+    doc.text(`Data do Teste: ${new Date(result.timestamp).toLocaleDateString()}`, 110, 42);
+
+    // Divisória
+    doc.setDrawColor(200);
+    doc.line(20, 52, pageWidth - 20, 52);
     
     // Dominant Emotion
     doc.setFontSize(16);
     doc.setTextColor(0);
-    doc.text(`Emoção Predominante: ${result.dominantEmotion.emotion}`, 20, 55);
+    doc.text(`Emoção Predominante: ${result.dominantEmotion.emotion}`, 20, 65);
     
     doc.setFontSize(12);
-    doc.text(`Nível: ${result.dominantEmotion.score}/40`, 20, 62);
+    doc.text(`Nível: ${result.dominantEmotion.score}/40`, 20, 72);
 
-    let yPos = 75;
+    let yPos = 85;
 
     // Report Content
     const content = REPORT_CONTENT[result.dominantEmotion.emotion];
@@ -101,7 +109,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     doc.text("Este relatório é informativo e não substitui diagnóstico profissional.", 20, 280);
     doc.text("Genthe - Gente que entende de gente", 20, 285);
 
-    doc.save("genthe-perfil-emocional.pdf");
+    doc.save(`genthe-relatorio-${result.userData.name.split(' ')[0].toLowerCase()}.pdf`);
   };
 
   const getUrgencyColor = (level: string) => {
@@ -114,7 +122,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
   };
 
   // WhatsApp comercial da Genthe atualizado
-  const whatsappLink = "https://wa.me/5567998005656?text=Olá! Fiz o teste de Inteligência Emocional e gostaria de saber mais sobre a Devolutiva com especialista.";
+  const whatsappLink = `https://wa.me/5567998005656?text=Olá! Sou ${result.userData.name}, fiz o teste de Inteligência Emocional e gostaria de saber mais sobre a Devolutiva com especialista.`;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -126,7 +134,10 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
             <Logo className="h-16 w-auto" />
            </div>
           <h1 className="text-3xl md:text-4xl font-heading font-bold text-gray-900">Seu Mapa Emocional</h1>
-          <p className="text-lg text-gray-600">Baseado em suas respostas, aqui está a análise do seu momento atual.</p>
+          <div className="flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-full shadow-sm">
+            <User className="w-4 h-4" />
+            <span className="font-medium">Olá, {result.userData.name.split(' ')[0]}</span>
+          </div>
         </div>
 
         {/* Top Cards Grid */}

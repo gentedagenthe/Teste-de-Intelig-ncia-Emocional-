@@ -22,10 +22,18 @@ export interface EmotionScore {
   color: string;
 }
 
+export interface UserData {
+  name: string;
+  email: string;
+  cpf: string;
+  birthDate: string;
+}
+
 export interface TestResult {
   scores: EmotionScore[];
   dominantEmotion: EmotionScore;
   timestamp: string;
+  userData: UserData;
 }
 
-export type AppStep = 'landing' | 'instructions' | 'quiz' | 'results';
+export type AppStep = 'landing' | 'instructions' | 'user-form' | 'quiz' | 'results';
