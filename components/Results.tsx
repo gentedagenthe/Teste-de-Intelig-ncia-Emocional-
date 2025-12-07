@@ -12,8 +12,13 @@ import { TestResult, EmotionType } from '../types';
 import { REPORT_CONTENT } from '../constants';
 import { Button } from './Button';
 import { Logo } from './Logo';
-import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Calendar, ArrowRight, User } from 'lucide-react';
+import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Lock, ArrowRight, User, Star, FileText, CreditCard } from 'lucide-react';
 import jsPDF from 'jspdf';
+
+// --- CONFIGURAÇÃO DE PAGAMENTO ---
+// ATENÇÃO: Substitua este link pelo seu Link de Pagamento do Stripe real.
+// Para criar: Painel Stripe > Produtos > Adicionar Produto > Criar Link de Pagamento.
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/SEU_CODIGO_AQUI"; 
 
 interface ResultsProps {
   result: TestResult;
@@ -41,7 +46,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     doc.text("Genthe", 20, 20);
     
     doc.setFontSize(18);
-    doc.text("Relatório de Inteligência Emocional", 20, 30);
+    doc.text("Resumo de Inteligência Emocional", 20, 30);
     
     // Dados do Usuário
     doc.setFontSize(10);
@@ -70,7 +75,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     
     doc.setFontSize(14);
     doc.setTextColor(0, 92, 144);
-    doc.text("Perfil", 20, yPos);
+    doc.text("Perfil Simplificado", 20, yPos);
     yPos += 10;
     
     doc.setFontSize(11);
@@ -93,7 +98,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
 
     doc.setFontSize(14);
     doc.setTextColor(124, 194, 66); // Verde Genthe #7CC242
-    doc.text("Como Equilibrar", 20, yPos);
+    doc.text("Dicas Básicas de Equilíbrio", 20, yPos);
     yPos += 10;
 
     doc.setFontSize(10);
@@ -103,13 +108,27 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
       yPos += 7;
     });
 
+    // Sales Pitch in PDF
+    yPos += 20;
+    doc.setDrawColor(0, 92, 144);
+    doc.setLineWidth(0.5);
+    doc.rect(20, yPos, pageWidth - 40, 40);
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 92, 144);
+    doc.text("Este é apenas um resumo gratuito.", 30, yPos + 15);
+    doc.setTextColor(50);
+    doc.text("Para ter acesso à análise completa das 8 emoções e plano de ação,", 30, yPos + 22);
+    doc.text("adquira o relatório completo por R$ 14,90.", 30, yPos + 29);
+
+
     // Disclaimer
     doc.setFontSize(8);
     doc.setTextColor(150);
     doc.text("Este relatório é informativo e não substitui diagnóstico profissional.", 20, 280);
     doc.text("Genthe - Gente que entende de gente", 20, 285);
 
-    doc.save(`genthe-relatorio-${result.userData.name.split(' ')[0].toLowerCase()}.pdf`);
+    doc.save(`genthe-resumo-${result.userData.name.split(' ')[0].toLowerCase()}.pdf`);
   };
 
   const getUrgencyColor = (level: string) => {
@@ -121,8 +140,23 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     }
   };
 
-  // WhatsApp comercial da Genthe atualizado
-  const whatsappLink = `https://wa.me/5567998005656?text=Olá! Sou ${result.userData.name}, fiz o teste de Inteligência Emocional e gostaria de saber mais sobre a Devolutiva com especialista.`;
+  const handlePurchase = () => {
+    // Adiciona o email do usuário na URL do Stripe para preencher automaticamente
+    // Se o link do stripe for inválido, apenas abre. Se tiver '?', adiciona com '&', senão com '?'
+    let url = STRIPE_PAYMENT_LINK;
+    if (!url.includes('buy.stripe.com')) {
+      alert("Configuração: Você precisa inserir seu Link do Stripe no código.");
+      return;
+    }
+    
+    const separator = url.includes('?') ? '&' : '?';
+    // O Stripe aceita 'prefilled_email' como parâmetro
+    url = `${url}${separator}prefilled_email=${encodeURIComponent(result.userData.email)}`;
+    
+    window.open(url, '_blank');
+  };
+
+  const whatsappLink = `https://wa.me/5567998005656?text=Olá! Sou ${result.userData.name}, tenho dúvidas sobre o Relatório Completo de IE.`;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -217,9 +251,9 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
         {/* Detailed Report Section */}
         <div className="bg-white rounded-3xl shadow-lg p-8">
           <div className="flex items-center justify-between mb-8 border-b border-gray-100 pb-4">
-            <h2 className="text-2xl font-heading font-bold text-gray-800">Seu Guia Personalizado</h2>
+            <h2 className="text-2xl font-heading font-bold text-gray-800">Seu Guia (Resumo)</h2>
             <Button onClick={handleDownloadPDF} variant="outline" className="hidden md:flex gap-2">
-              <Download className="w-4 h-4" /> Baixar PDF
+              <Download className="w-4 h-4" /> Baixar Resumo
             </Button>
           </div>
 
@@ -256,33 +290,79 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
           </div>
         </div>
 
-        {/* SALES SECTION - DEVOLUTIVA */}
-        <div className="bg-gradient-to-r from-[#1F4E78] to-[#4472C4] text-white rounded-3xl shadow-xl p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 bg-white opacity-10 w-64 h-64 rounded-full"></div>
-          
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-4 max-w-xl">
-              <div className="flex items-center gap-2 text-brand-light font-bold uppercase tracking-wider text-sm">
-                <Calendar className="w-4 h-4" />
-                <span>Exclusivo Genthe</span>
-              </div>
-              <h2 className="text-3xl font-heading font-bold leading-tight">
-                Quer ir além deste resultado?
-              </h2>
-              <p className="text-blue-100 text-lg">
-                Agende uma <span className="font-bold text-white">Devolutiva com um Especialista</span>. Transforme esse diagnóstico em um plano de ação concreto para sua carreira e vida pessoal.
-              </p>
-            </div>
+        {/* SALES SECTION - RELATÓRIO COMPLETO */}
+        <div className="bg-gradient-to-br from-[#1F4E78] to-[#005C90] text-white rounded-3xl shadow-xl overflow-hidden animate-fade-in">
+          <div className="p-8 md:p-12 relative">
+            {/* Background Decor */}
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 bg-white opacity-5 w-64 h-64 rounded-full pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 -mb-10 -ml-10 bg-[#7CC242] opacity-10 w-48 h-48 rounded-full pointer-events-none"></div>
+            
+            <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+              
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 text-[#7CC242] font-bold uppercase tracking-wider text-sm bg-white/10 w-fit px-3 py-1 rounded-full">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>Oferta Especial</span>
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-heading font-bold leading-tight">
+                  Desbloqueie seu Relatório Completo
+                </h2>
+                
+                <p className="text-blue-100 text-lg leading-relaxed">
+                  O que você viu acima foi apenas o resumo. Tenha acesso à análise profunda de <strong>todas as suas 8 emoções</strong> e um plano prático para sua vida.
+                </p>
 
-            <a 
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-[#7CC242] hover:bg-[#6ab035] text-white px-8 py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-105 flex items-center gap-2 text-lg whitespace-nowrap"
-            >
-              Agendar Devolutiva
-              <ArrowRight className="w-5 h-5" />
-            </a>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3 text-blue-50">
+                    <CheckCircle className="w-5 h-5 text-[#7CC242]" />
+                    <span>Análise detalhada das 8 emoções</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-blue-50">
+                    <CheckCircle className="w-5 h-5 text-[#7CC242]" />
+                    <span>Gráficos comparativos avançados</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-blue-50">
+                    <CheckCircle className="w-5 h-5 text-[#7CC242]" />
+                    <span>Exercícios práticos personalizados</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-blue-50">
+                    <CheckCircle className="w-5 h-5 text-[#7CC242]" />
+                    <span>Orientação de carreira e relacionamentos</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="flex flex-col items-center justify-center bg-white/10 rounded-2xl p-8 backdrop-blur-sm border border-white/20 shadow-2xl">
+                <span className="text-blue-200 text-sm font-medium uppercase tracking-wide mb-2">Investimento Único</span>
+                <div className="flex items-baseline gap-1 mb-6">
+                  <span className="text-2xl font-bold opacity-60">R$</span>
+                  <span className="text-5xl font-bold text-white">14,90</span>
+                </div>
+
+                <button 
+                  onClick={handlePurchase}
+                  className="w-full bg-[#7CC242] hover:bg-[#6ab035] text-white py-4 rounded-xl font-bold shadow-lg transition-all transform hover:scale-105 flex items-center justify-center gap-2 text-lg group mb-4"
+                >
+                  <CreditCard className="w-5 h-5" />
+                  Comprar Relatório Agora
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                
+                <div className="text-xs text-blue-200 text-center space-y-2">
+                  <p>Pagamento seguro via Stripe (PIX ou Cartão)</p>
+                  <p className="opacity-70">Ambiente 100% Criptografado 🔒</p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-white/10 w-full text-center">
+                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-200 hover:text-white flex items-center justify-center gap-1 transition-colors">
+                        <Phone className="w-3 h-3" />
+                        Precisa de ajuda ou prefere PIX direto?
+                    </a>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
@@ -310,7 +390,7 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
         {/* Footer Actions */}
         <div className="flex flex-col md:flex-row gap-4 justify-center pb-8 pt-4">
            <Button onClick={handleDownloadPDF} variant="secondary" className="md:hidden w-full flex justify-center gap-2">
-              <Download className="w-4 h-4" /> Baixar Relatório PDF
+              <Download className="w-4 h-4" /> Baixar Resumo Gratuito
            </Button>
            <Button onClick={onRetake} variant="outline" className="md:w-auto flex items-center justify-center gap-2 border-gray-300 text-gray-500 hover:text-brand-dark">
              <RefreshCw className="w-4 h-4" /> Refazer Teste
