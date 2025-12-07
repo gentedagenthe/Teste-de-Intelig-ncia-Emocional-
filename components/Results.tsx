@@ -16,9 +16,9 @@ import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Lock, ArrowRigh
 import jsPDF from 'jspdf';
 
 // --- CONFIGURAÇÃO DE PAGAMENTO ---
-// ATENÇÃO: Substitua este link pelo seu Link de Pagamento do Stripe real.
-// Para criar: Painel Stripe > Produtos > Adicionar Produto > Criar Link de Pagamento.
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/SEU_CODIGO_AQUI"; 
+// COLE AQUI SEU LINK DE PAGAMENTO (Pode ser Stripe, Assiny, Asaas, Kiwify, etc)
+// Exemplo: "https://pay.assiny.com.br/checkout/..." ou "https://buy.stripe.com/..."
+const CHECKOUT_LINK = "https://seu-link-de-pagamento-aqui.com"; 
 
 interface ResultsProps {
   result: TestResult;
@@ -141,17 +141,22 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
   };
 
   const handlePurchase = () => {
-    // Adiciona o email do usuário na URL do Stripe para preencher automaticamente
-    // Se o link do stripe for inválido, apenas abre. Se tiver '?', adiciona com '&', senão com '?'
-    let url = STRIPE_PAYMENT_LINK;
-    if (!url.includes('buy.stripe.com')) {
-      alert("Configuração: Você precisa inserir seu Link do Stripe no código.");
+    let url = CHECKOUT_LINK;
+    
+    // Verificação simples se o link foi configurado
+    if (url.includes('seu-link-de-pagamento-aqui')) {
+      alert("Aviso para o Admin: Configure o link de pagamento no arquivo Results.tsx");
       return;
     }
     
+    // Tenta adicionar o email para preenchimento automático (funciona em Stripe, Hotmart, etc)
+    // Alguns gateways usam ?email=, outros ?customer_email= ou ?prefilled_email=
+    // Aqui usamos uma lógica genérica que tenta preservar parametros existentes
     const separator = url.includes('?') ? '&' : '?';
-    // O Stripe aceita 'prefilled_email' como parâmetro
-    url = `${url}${separator}prefilled_email=${encodeURIComponent(result.userData.email)}`;
+    
+    // Se for Stripe usa prefilled_email, se for outros geralmente é email. 
+    // Vamos adicionar ambos para garantir compatibilidade
+    url = `${url}${separator}email=${encodeURIComponent(result.userData.email)}&prefilled_email=${encodeURIComponent(result.userData.email)}`;
     
     window.open(url, '_blank');
   };
@@ -350,8 +355,8 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
                 </button>
                 
                 <div className="text-xs text-blue-200 text-center space-y-2">
-                  <p>Pagamento seguro via Stripe (PIX ou Cartão)</p>
-                  <p className="opacity-70">Ambiente 100% Criptografado 🔒</p>
+                  <p>Pagamento seguro (PIX ou Cartão)</p>
+                  <p className="opacity-70">Ambiente Criptografado 🔒</p>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-white/10 w-full text-center">
