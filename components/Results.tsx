@@ -1,5 +1,5 @@
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import {
   Radar,
   RadarChart,
@@ -17,9 +17,12 @@ import { Download, AlertTriangle, CheckCircle, RefreshCw, Phone, Lock, ArrowRigh
 import jsPDF from 'jspdf';
 
 // --- CONFIGURAÇÃO DE PAGAMENTO ---
-// COLE AQUI SEU LINK DE PAGAMENTO (Pode ser Stripe, Assiny, Asaas, Kiwify, etc)
-// Exemplo: "https://pay.assiny.com.br/checkout/..." ou "https://buy.stripe.com/..."
+// Link para onde o usuário vai ao clicar em "Comprar"
 const CHECKOUT_LINK = "https://seu-link-de-pagamento-aqui.com"; 
+
+// --- CONFIGURAÇÃO DA PLANILHA GOOGLE (A PARTE MAIS IMPORTANTE) ---
+// URL configurada para o script de recepção de leads da Genthe
+const GOOGLE_SCRIPT_URL: string = "https://script.google.com/macros/s/AKfycbx4PT8UWlkTFcKZWJIh3PCiuOl1CEfo2p2jvCH8GXiLdU_St6eYW98bkOzr-e8JQEj-Ug/exec";
 
 interface ResultsProps {
   result: TestResult;
@@ -27,6 +30,8 @@ interface ResultsProps {
 }
 
 export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
+  const dataSentRef = useRef(false);
+
   const chartData = useMemo(() => {
     return result.scores.map(s => ({
       subject: s.emotion,
@@ -36,6 +41,46 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
   }, [result]);
 
   const urgentEmotions = result.scores.filter(s => s.score >= 33);
+
+  // Envio automático do Lead para a Planilha Google
+  useEffect(() => {
+    // Evita enviar duas vezes (React Strict Mode pode rodar o efeito 2x)
+    if (dataSentRef.current) return;
+    
+    // Verifica se a URL foi configurada corretamente
+    if (GOOGLE_SCRIPT_URL.includes("COLE_SUA_URL") || GOOGLE_SCRIPT_URL === "") {
+      console.warn("⚠️ AVISO: A URL do Google Script ainda não foi configurada no código.");
+      return;
+    }
+
+    const dataToSend = {
+      name: result.userData.name,
+      email: result.userData.email,
+      cpf: result.userData.cpf,
+      birthDate: result.userData.birthDate,
+      emotion: result.dominantEmotion.emotion,
+      score: result.dominantEmotion.score
+    };
+
+    // Envio usando fetch para o Google Apps Script
+    // O modo 'no-cors' é essencial para enviar dados ao Google sem bloqueio do navegador
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataToSend)
+    })
+    .then(() => {
+      console.log('✅ SUCESSO: Dados enviados para a planilha!');
+      dataSentRef.current = true;
+    })
+    .catch((err) => {
+      console.error('❌ ERRO: Falha ao enviar para planilha:', err);
+    });
+
+  }, [result]);
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
@@ -146,11 +191,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     
     // Verificação simples se o link foi configurado
     if (url.includes('seu-link-de-pagamento-aqui')) {
-      alert("Aviso para o Admin: Configure o link de pagamento no arquivo Results.tsx");
+      alert("Você será redirecionado para a página de pagamento em breve.");
       return;
     }
     
-    // Tenta adicionar o email para preenchimento automático (funciona em Stripe, Hotmart, etc)
+    // Tenta adicionar o email para preenchimento automático
     const separator = url.includes('?') ? '&' : '?';
     url = `${url}${separator}email=${encodeURIComponent(result.userData.email)}&prefilled_email=${encodeURIComponent(result.userData.email)}`;
     
