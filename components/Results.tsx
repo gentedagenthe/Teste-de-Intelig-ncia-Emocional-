@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import {
   Radar,
@@ -150,18 +151,11 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
     }
     
     // Tenta adicionar o email para preenchimento automático (funciona em Stripe, Hotmart, etc)
-    // Alguns gateways usam ?email=, outros ?customer_email= ou ?prefilled_email=
-    // Aqui usamos uma lógica genérica que tenta preservar parametros existentes
     const separator = url.includes('?') ? '&' : '?';
-    
-    // Se for Stripe usa prefilled_email, se for outros geralmente é email. 
-    // Vamos adicionar ambos para garantir compatibilidade
     url = `${url}${separator}email=${encodeURIComponent(result.userData.email)}&prefilled_email=${encodeURIComponent(result.userData.email)}`;
     
     window.open(url, '_blank');
   };
-
-  const whatsappLink = `https://wa.me/5567998005656?text=Olá! Sou ${result.userData.name}, tenho dúvidas sobre o Relatório Completo de IE.`;
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -357,13 +351,6 @@ export const Results: React.FC<ResultsProps> = ({ result, onRetake }) => {
                 <div className="text-xs text-blue-200 text-center space-y-2">
                   <p>Pagamento seguro (PIX ou Cartão)</p>
                   <p className="opacity-70">Ambiente Criptografado 🔒</p>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-white/10 w-full text-center">
-                    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-200 hover:text-white flex items-center justify-center gap-1 transition-colors">
-                        <Phone className="w-3 h-3" />
-                        Precisa de ajuda ou prefere PIX direto?
-                    </a>
                 </div>
               </div>
 
